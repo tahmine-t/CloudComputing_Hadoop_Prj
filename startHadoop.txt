@@ -1,0 +1,39 @@
+ssh localhost
+ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+
+stop-all.sh
+hdfs --daemon stop datanode
+hdfs --daemon stop namenode
+hdfs namenode -fromat
+$HADOOP_HOME/bin/hdfs namenode -format
+rm -r hadoop/data/datanode/
+rm -r hadoop/data/namenode/
+cd hadoop/data/
+mkdir -p {datanode,namenode}
+
+start-all.sh
+jps
+
+http://localhost:9870/
+
+# create dataset
+hdfs dfs -mkdir /user/cifar-10
+hdfs dfs -put ./dataset/cifar-10/* /user/cifar-10/
+hdfs dfs -ls /user/cifar-10
+
+'''
+conda activate pydoop_env
+source myenv/bin/activate
+
+to run localy:
+echo '/user/cifar-10/data_batch_1' | python mapper.py
+
+to run hadoop:
+hdfs dfs -rmdir /user/cifar-10_resized
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.4.0.jar \
+    -input /user/cifar-10 -output /user/cifar-10_resized \
+    -file ./mapper.py -numReduceTasks 0 \
+    -mapper 'python ./mapper.py'
+'''
