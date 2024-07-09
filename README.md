@@ -32,7 +32,3 @@ This project leverages Hadoop for distributed processing of the CIFAR-10 dataset
 
 ## Authors
 Tahmine Tavakoli, Elham Armin, Alireza Amini
-
----
-
-Feel free to adjust any specific details to match your project setup and implementation.
